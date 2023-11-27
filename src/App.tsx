@@ -7,8 +7,30 @@ function App() {
           email: "",
           password: "",
      })
+
+     const [emailError, setEmailError] = useState<string | null>(null)
+     const [passowrdError, setPassowrdError] = useState<string | null>(null)
+
      function handleSubmit(e: FormEvent) {
           e.preventDefault()
+          setEmailError(null)
+          setPassowrdError(null)
+          let hasError = false
+
+          if (!EmailValidator(user.email)) {
+               setEmailError("Invalid email")
+               hasError = true
+          }
+
+          if (!user.password) {
+               setPassowrdError("Password is required")
+               hasError = true
+          }
+
+          if (hasError) {
+               return
+          }
+
           console.log(user)
      }
 
@@ -24,13 +46,14 @@ function App() {
                               Email
                          </label>
                          <input
-                              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${emailError ? "border-red-500" : "border-gray-300"}`}
                               id="email"
                               type="text"
                               placeholder="Email"
                               value={user.email}
                               onChange={handleChange}
                          />
+                         {emailError && <p className="text-red-500 text-xs italic">{emailError}</p>}
                     </div>
 
                     <div className="mb-4">
@@ -38,13 +61,14 @@ function App() {
                               Password
                          </label>
                          <input
-                              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${passowrdError ? "border-red-500" : "border-gray-300"}`}
                               id="password"
                               type="password"
                               placeholder="Password"
                               value={user.password}
                               onChange={handleChange}
                          />
+                         {passowrdError && <p className="text-red-500 text-xs italic">{passowrdError}</p>}
                     </div>
 
                     <div>
