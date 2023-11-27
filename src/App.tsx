@@ -35,7 +35,7 @@ function App() {
      }
 
      function handleChange(e: ChangeEvent<HTMLInputElement>) {
-          setUser({ ...user, [e.target.id]: e.target.value })
+          setUser(prev => ({ ...prev, [e.target.id]: e.target.value }))
      }
 
      return (
