@@ -1,8 +1,19 @@
-import { FormEvent } from "react"
+import { ChangeEvent, FormEvent, useState } from "react"
+import { Credentials } from "./types/credentials"
+import { EmailValidator } from "./utils/emailValidator"
 
 function App() {
+     const [user, setUser] = useState<Credentials>({
+          email: "",
+          password: "",
+     })
      function handleSubmit(e: FormEvent) {
           e.preventDefault()
+          console.log(user)
+     }
+
+     function handleChange(e: ChangeEvent<HTMLInputElement>) {
+          setUser({ ...user, [e.target.id]: e.target.value })
      }
 
      return (
@@ -15,8 +26,10 @@ function App() {
                          <input
                               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                               id="email"
-                              type="email"
+                              type="text"
                               placeholder="Email"
+                              value={user.email}
+                              onChange={handleChange}
                          />
                     </div>
 
@@ -29,6 +42,8 @@ function App() {
                               id="password"
                               type="password"
                               placeholder="Password"
+                              value={user.password}
+                              onChange={handleChange}
                          />
                     </div>
 
