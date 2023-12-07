@@ -1,59 +1,40 @@
-import { ChangeEvent, FormEvent, useState } from "react"
-import { Credentials } from "./types/credentials"
-import { EmailValidator } from "./utils/emailValidator"
+import { useForm } from "react-hook-form"
+import { Credentials, credentialsSchema } from "./types/credentials"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { DevTool } from "@hookform/devtools"
 
 function App() {
-     const [user, setUser] = useState<Credentials>({
-          email: "",
-          password: "",
-     })
+     const { register, handleSubmit, control, formState: { errors } } = useForm<Credentials>(
+          {
+               defaultValues: {
+                    email: "",
+                    password: ""
+               },
+               resolver: zodResolver(credentialsSchema)
+          },
+     )
 
-     const [emailError, setEmailError] = useState<string | null>(null)
-     const [passowrdError, setPassowrdError] = useState<string | null>(null)
-
-     function handleSubmit(e: FormEvent) {
-          e.preventDefault()
-          setEmailError(null)
-          setPassowrdError(null)
-          let hasError = false
-
-          if (!EmailValidator(user.email)) {
-               setEmailError("Invalid email")
-               hasError = true
-          }
-
-          if (!user.password) {
-               setPassowrdError("Password is required")
-               hasError = true
-          }
-
-          if (hasError) {
-               return
-          }
-
-          console.log(user)
-     }
-
-     function handleChange(e: ChangeEvent<HTMLInputElement>) {
-          setUser(prev => ({ ...prev, [e.target.id]: e.target.value }))
+     function submit(data: Credentials) {
+          console.log("Email: ", data.email)
+          console.log(data)
      }
 
      return (
           <div className='flex flex-col w-1/2 mx-auto h-screen justify-center'>
-               <form className='flex flex-col' onSubmit={handleSubmit}>
+               <form className='flex flex-col' onSubmit={handleSubmit(submit)}>
                     <div className="mb-4">
                          <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
                               Email
                          </label>
                          <input
-                              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${emailError ? "border-red-500" : "border-gray-300"}`}
+                              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline  ${errors.email ? "border-red-500" : ""}`}
                               id="email"
                               type="text"
                               placeholder="Email"
-                              value={user.email}
-                              onChange={handleChange}
+                              {...register("email")}
+                              data-testid="email-text"
                          />
-                         {emailError && <p className="text-red-500 text-xs italic">{emailError}</p>}
+                         {errors.email && <p className="text-red-500 text-xs italic" data-testid="email-error">{errors.email.message}</p>}
                     </div>
 
                     <div className="mb-4">
@@ -61,25 +42,27 @@ function App() {
                               Password
                          </label>
                          <input
-                              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${passowrdError ? "border-red-500" : "border-gray-300"}`}
+                              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.password ? "border-red-500" : ""}`}
                               id="password"
                               type="password"
                               placeholder="Password"
-                              value={user.password}
-                              onChange={handleChange}
+                              {...register("password")}
+                              data-testid="password-text"
                          />
-                         {passowrdError && <p className="text-red-500 text-xs italic">{passowrdError}</p>}
+                         {errors.password && <p className="text-red-500 text-xs italic" data-testid="password-error">{errors.password.message}</p>}
                     </div>
 
                     <div>
                          <button
                               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                               type="submit"
+                              data-testid="submit-btn"
                          >
                               Sign In
                          </button>
                     </div>
                </form>
+               <DevTool control={control} />
           </div>
      )
 }
